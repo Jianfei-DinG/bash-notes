@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>Linux 命令手册 - 个人知识库</title>
+    <!-- 引入样式与脚本 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/github-markdown-css/5.2.0/github-markdown.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+    
+    <style>
+        :root { 
+            --sidebar-width: 320px; 
+            --header-height: 60px;
+            --bg-dark: #0d1117; 
+            --header-bg: #010409;
+            --sidebar-bg: #161b22;
+            --border-color: #30363d; 
+            --text-color: #c9d1d9;
+            --active-green: #7ee787;
+        }
+
+        /* --- 基础布局 --- */
+        body { 
+            margin: 0; 
+            background: var(--bg-dark); 
+            color: var(--text-color); 
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif; 
+            display: flex; 
+            flex-direction: column; /* 纵向排列：Header 在上，内容在下 */
+            height: 100vh; 
+            overflow: hidden; 
+        }
+
+        /* --- 头部栏样式 --- */
+        #site-header {
+            height: var(--header-height);
+            background: var(--header-bg);
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 30px;
+            flex-shrink: 0;
+            z-index: 100;
+        }
+        .header-left { display: flex; align-items: center; gap: 15px; }
+        .header-logo { 
+            font-size: 20px; font-weight: bold; color: white; text-decoration: none;
+            display: flex; align-items: center; gap: 10px;
+        }
+        .header-logo svg { fill: var(--active-green); }
+        .header-right { display: flex; gap: 20px; }
+        .header-right a { color: #8b949e; text-decoration: none; font-size: 14px; transition: 0.3s; }
+        .header-right a:hover { color: var(--active-green); }
+
+        /* --- 下方容器 (侧边栏 + 内容) --- */
+        #main-wrapper {
+            display: flex;
+            flex: 1; /* 占据剩余高度 */
+            overflow: hidden;
+        }
+
+        /* --- 统一滚动条美化 --- */
+        #menu-list::-webkit-scrollbar,
+        #main-view::-webkit-scrollbar {
+            width: 6px; height: 6px;
+        }
+        #menu-list::-webkit-scrollbar-track,
+        #main-view::-webkit-scrollbar-track { background: transparent; }
+        #menu-list::-webkit-scrollbar-thumb,
+        #main-view::-webkit-scrollbar-thumb {
+            background-color: #30363d; border-radius: 10px;
+        }
+        #menu-list::-webkit-scrollbar-thumb:hover,
+        #main-view::-webkit-scrollbar-thumb:hover { background-color: #444c56; }
+
+        /* --- 左侧侧边栏 --- */
+        #sidebar { 
+            width: var(--sidebar-width); 
+            background: var(--sidebar-bg); 
+            border-right: 1px solid var(--border-color); 
+            display: flex; 
+            flex-direction: column; 
+            flex-shrink: 0; 
+        }
+        .search-container { padding: 15px; border-bottom: 1px solid var(--border-color); }
+        #search-input { 
+            width: 100%; padding: 10px; border-radius: 6px; border: 1px solid var(--border-color); 
+            background: var(--bg-dark); color: white; outline: none; box-sizing: border-box; 
+        }
+        #menu-list { flex: 1; overflow-y: auto; list-style: none; margin: 0; padding: 0; }
+        .menu-item { 
+            padding: 15px 20px; cursor: pointer; border-bottom: 1px solid #21262d; 
+            font-size: 14px; transition: 0.2s; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; 
+        }
+        .menu-item:hover { background: #1c2128; }
+        .menu-item.active { 
+            background: #21262d; color: var(--active-green); 
+            border-left: 4px solid #238636; font-weight: bold; 
+        }
+
+        /* --- 右侧内容区 --- */
+        #main-view { flex: 1; padding: 40px; overflow-y: auto; scroll-behavior: smooth; }
+        .markdown-body { max-width: 850px; margin: 0 auto; background: transparent !important; }
+        .content-title { color: var(--active-green); border-bottom: 1px solid var(--border-color); padding-bottom: 10px; margin-bottom: 25px; }
+
+        /* --- 代码块与复制按钮 --- */
+        pre { 
+            position: relative; background: #010409 !important; 
+            border: 1px solid var(--border-color) !important; 
+            padding: 16px !important; border-radius: 8px !important; 
+        }
+        pre:hover .copy-btn { opacity: 1; }
+        .copy-btn { 
+            position: absolute; top: 10px; right: 10px; padding: 5px 10px; 
+            background: #30363d; color: var(--text-color); border: 1px solid #f0f6fc1a; 
+            border-radius: 6px; cursor: pointer; font-size: 12px; opacity: 0; transition: 0.3s; z-index: 10; 
+        }
+        .copy-btn:hover { background: #444c56; border-color: #8b949e; }
+        .copy-btn.success { color: var(--active-green); border-color: #238636; }
+
+        .welcome-msg { text-align: center; margin-top: 15%; color: #8b949e; }
+    </style>
+</head>
+<body>
+
+<!-- 新增：头部栏 -->
+<header id="site-header">
+    <div class="header-left">
+        <a href="/" class="header-logo">
+            <!-- 简单的终端图标 -->
+            <svg height="24" width="24" viewBox="0 0 16 16"><path d="M0 2.75C0 1.784.784 1 1.75 1h12.5c.966 0 1.75.784 1.75 1.75v10.5A1.75 1.75 0 0 1 14.25 14H1.75A1.75 1.75 0 0 1 0 12.25Zm1.75-.25a.25.25 0 0 0-.25.25v10.5c0 .138.112.25.25.25h12.5a.25.25 0 0 0 .25-.25V2.75a.25.25 0 0 0-.25-.25ZM3.25 4h5.5a.75.75 0 0 1 0 1.5h-5.5a.75.75 0 0 1 0-1.5ZM3.25 7h8.5a.75.75 0 0 1 0 1.5h-8.5a.75.75 0 0 1 0-1.5ZM3.25 10h4.5a.75.75 0 0 1 0 1.5h-4.5a.75.75 0 0 1 0-1.5Z"></path></svg>
+            Linux 命令集仓库
+        </a>
+    </div>
+    <div class="header-right">
+        <a href="https://github.com" target="_blank">GitHub</a>
+        <a href="javascript:location.reload()">刷新</a>
+        <a href="#" onclick="alert('这就是你的个人命令手册！')">关于</a>
+    </div>
+</header>
+
+<!-- 下方主容器 -->
+<div id="main-wrapper">
+    <aside id="sidebar">
+        <div class="search-container">
+            <input type="text" id="search-input" placeholder="🔍 搜索标题或代码内容...">
+        </div>
+        <ul id="menu-list"></ul>
+    </aside>
+
+    <main id="main-view">
+        <div id="content-area" class="markdown-body">
+            <div class="welcome-msg">
+                <h2>📚 命令手册已就绪</h2>
+                <p>请从左侧列表选择一个章节，或使用搜索功能</p>
+            </div>
+        </div>
+    </main>
+</div>
+
+<script>
+let allData = [];
+
+async function init() {
+    try {
+        const response = await fetch('命令集.md');
+        if (!response.ok) throw new Error("无法加载命令集.md");
+        const rawText = await response.text();
+
+        const parts = rawText.split(/<details/i);
+        parts.forEach(part => {
+            const sStart = part.toLowerCase().indexOf('<summary>');
+            const sEnd = part.toLowerCase().indexOf('</summary>');
+            if (sStart !== -1 && sEnd !== -1) {
+                const title = part.substring(sStart + 9, sEnd).replace(/<[^>]+>/g, '').trim();
+                const dEnd = part.toLowerCase().indexOf('</details>');
+                let content = (dEnd !== -1) ? part.substring(sEnd + 10, dEnd).trim() : part.substring(sEnd + 10).trim();
+                content = content.replace(/={10,}/g, '');
+                allData.push({ title, content });
+            }
+        });
+
+        if (allData.length > 0) {
+            renderMenu(allData);
+            handleHashNavigation();
+        }
+    } catch (err) {
+        document.getElementById('content-area').innerHTML = `<h2>错误: ${err.message}</h2>`;
+    }
+}
+
+function renderMenu(data) {
+    const menuList = document.getElementById('menu-list');
+    menuList.innerHTML = '';
+    data.forEach((item) => {
+        const li = document.createElement('li');
+        li.className = 'menu-item';
+        li.innerText = item.title;
+        li.setAttribute('data-title', item.title);
+        li.onclick = () => {
+            window.location.hash = encodeURIComponent(item.title);
+        };
+        menuList.appendChild(li);
+    });
+}
+
+function handleHashNavigation() {
+    const hash = window.location.hash.substring(1);
+    if (!hash) return;
+    const targetTitle = decodeURIComponent(hash);
+    const targetItem = allData.find(d => d.title === targetTitle);
+    if (targetItem) {
+        showContent(targetItem);
+        document.querySelectorAll('.menu-item').forEach(el => {
+            el.classList.toggle('active', el.getAttribute('data-title') === targetTitle);
+        });
+    }
+}
+
+window.addEventListener('hashchange', handleHashNavigation);
+
+function showContent(item) {
+    const container = document.getElementById('content-area');
+    container.innerHTML = `<h1 class="content-title">${item.title}</h1>` + marked.parse(item.content);
+    Prism.highlightAll();
+    setTimeout(addCopyButtons, 50);
+    document.getElementById('main-view').scrollTop = 0;
+}
+
+function addCopyButtons() {
+    document.querySelectorAll('pre').forEach(pre => {
+        if (pre.querySelector('.copy-btn')) return;
+        const btn = document.createElement('button');
+        btn.className = 'copy-btn';
+        btn.innerText = '复制';
+        btn.onclick = () => {
+            const code = pre.querySelector('code').innerText;
+            navigator.clipboard.writeText(code).then(() => {
+                btn.innerText = '已复制!';
+                btn.classList.add('success');
+                setTimeout(() => { btn.innerText = '复制'; btn.classList.remove('success'); }, 2000);
+            });
+        };
+        pre.appendChild(btn);
+    });
+}
+
+document.getElementById('search-input').oninput = function(e) {
+    const term = e.target.value.toLowerCase();
+    const filtered = allData.filter(item => 
+        item.title.toLowerCase().includes(term) || item.content.toLowerCase().includes(term)
+    );
+    renderMenu(filtered);
+};
+
+init();
+</script>
+
+</body>
+</html>
