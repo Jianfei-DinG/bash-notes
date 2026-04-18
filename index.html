@@ -411,26 +411,6 @@ function addCopyButtons() {
         btn.className = 'copy-btn';
         btn.innerText = '复制';
         
-        // 定位按钮到代码块右上角
-        const updatePosition = () => {
-            const rect = pre.getBoundingClientRect();
-            btn.style.top = (rect.top + 10) + 'px';
-            btn.style.right = (window.innerWidth - rect.right + 10) + 'px';
-        };
-        
-        // 初始定位
-        updatePosition();
-        
-        // 滚动时更新位置
-        const scrollHandler = () => {
-            if (btn.style.opacity === '1' || pre.matches(':hover')) {
-                updatePosition();
-            }
-        };
-        
-        // 监听滚动
-        document.getElementById('main-view').addEventListener('scroll', scrollHandler);
-        
         btn.onclick = () => {
             const code = pre.querySelector('code').innerText;
             navigator.clipboard.writeText(code).then(() => {
