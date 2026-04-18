@@ -1,0 +1,750 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>Linux 命令手册 - 个人知识库</title>
+    <!-- 引入样式与脚本 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/github-markdown-css/5.2.0/github-markdown.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+    
+    <style>
+        :root { 
+            --sidebar-width: 320px; 
+            --header-height: 60px;
+            --bg-dark: #0d1117; 
+            --header-bg: #010409;
+            --sidebar-bg: #161b22;
+            --border-color: #30363d; 
+            --text-color: #c9d1d9;
+            --active-green: #7ee787;
+        }
+
+        /* --- 基础布局 --- */
+        body { 
+            margin: 0; 
+            background: var(--bg-dark); 
+            color: var(--text-color); 
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif; 
+            display: flex; 
+            flex-direction: column; /* 纵向排列：Header 在上，内容在下 */
+            height: 100vh; 
+            overflow: hidden; 
+        }
+
+        /* --- 头部栏样式 --- */
+        #site-header {
+            height: var(--header-height);
+            background: var(--header-bg);
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 30px;
+            flex-shrink: 0;
+            z-index: 100;
+        }
+        .header-left { display: flex; align-items: center; gap: 15px; }
+        .header-logo { 
+            font-size: 20px; font-weight: bold; color: white; text-decoration: none;
+            display: flex; align-items: center; gap: 10px;
+        }
+        .header-logo svg { fill: var(--active-green); }
+        .header-right { display: flex; gap: 20px; }
+        .header-right a { color: #8b949e; text-decoration: none; font-size: 14px; transition: 0.3s; }
+        .header-right a:hover { color: var(--active-green); }
+
+        /* --- 下方容器 (侧边栏 + 内容) --- */
+        #main-wrapper {
+            display: flex;
+            flex: 1; /* 占据剩余高度 */
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* --- 左侧侧边栏 --- */
+        #sidebar { 
+            width: var(--sidebar-width); 
+            background: var(--sidebar-bg); 
+            border-right: 1px solid var(--border-color); 
+            display: flex; 
+            flex-direction: column; 
+            flex-shrink: 0;
+            transition: width 0.3s ease, transform 0.3s ease;
+        }
+        #sidebar.collapsed {
+            width: 0;
+            transform: translateX(-100%);
+            overflow: hidden;
+        }
+        
+        /* 侧边栏折叠按钮 */
+        .sidebar-toggle {
+            position: absolute;
+            left: var(--sidebar-width);
+            top: 50%;
+            transform: translateY(-50%);
+            width: 32px;
+            height: 64px;
+            background: #14761d;
+            border: none;
+            border-radius: 0 8px 8px 0;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 200;
+            transition: left 0.3s ease, background 0.3s ease;
+            box-shadow: 2px 0 8px rgba(0, 0, 0, 0.3);
+        }
+        .sidebar-toggle:hover {
+            background: #2ea043;
+        }
+        .sidebar-toggle svg {
+            width: 20px;
+            height: 20px;
+            fill: white;
+            transition: transform 0.3s ease;
+        }
+        .sidebar-toggle.collapsed {
+            left: 0;
+        }
+        .sidebar-toggle.collapsed svg {
+            transform: rotate(180deg);
+        }
+        .search-container { padding: 15px; border-bottom: 1px solid var(--border-color); }
+        #search-input { 
+            width: 100%; padding: 10px; border-radius: 6px; border: 1px solid var(--border-color); 
+            background: var(--bg-dark); color: white; outline: none; box-sizing: border-box; 
+        }
+        #menu-list { flex: 1; overflow-y: auto; list-style: none; margin: 0; padding: 0; }
+        .menu-item { 
+            padding: 15px 20px; cursor: pointer; border-bottom: 1px solid #21262d; 
+            font-size: 14px; transition: 0.2s; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; 
+        }
+        .menu-item:hover { background: #1c2128; }
+        .menu-item.active { 
+            background: #21262d; color: var(--active-green); 
+            border-left: 4px solid #238636; font-weight: bold; 
+        }
+
+        /* --- 右侧内容区 --- */
+        #main-view { flex: 1; padding: 40px; overflow-y: auto; scroll-behavior: smooth; }
+        .markdown-body { max-width: 850px; margin: 0 auto; background: transparent !important; }
+        .content-title { color: var(--active-green); border-bottom: 1px solid var(--border-color); padding-bottom: 10px; margin-bottom: 25px; }
+
+        /* --- 代码块与复制按钮 --- */
+        pre { 
+            position: relative; 
+            background: #010409 !important; 
+            border: 1px solid var(--border-color) !important; 
+            padding: 16px !important; 
+            border-radius: 8px !important;
+            overflow-x: auto;
+        }
+        /* 代码块滚动条样式 */
+        pre::-webkit-scrollbar {
+            height: 3px !important;
+        }
+        pre::-webkit-scrollbar-track {
+            background: transparent !important;
+        }
+        pre::-webkit-scrollbar-thumb {
+            background: #484f58 !important;
+            border-radius: 0 !important;
+        }
+        pre::-webkit-scrollbar-thumb:hover {
+            background: #7ee787 !important;
+        }
+        pre:hover .copy-btn { opacity: 1; }
+        .copy-btn { 
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            padding: 5px 10px; 
+            background: #30363d; 
+            color: var(--text-color); 
+            border: 1px solid #f0f6fc1a; 
+            border-radius: 6px; 
+            cursor: pointer; 
+            font-size: 12px; 
+            opacity: 0; 
+            transition: opacity 0.3s, background 0.3s; 
+            z-index: 10;
+        }
+        .copy-btn:hover { background: #444c56; border-color: #8b949e; }
+        .copy-btn.success { color: var(--active-green); border-color: #238636; }
+
+        .welcome-msg { text-align: center; margin-top: 15%; color: #8b949e; }
+
+        /* --- 页脚样式 --- */
+        #site-footer {
+            background: var(--header-bg);
+            border-top: 1px solid var(--border-color);
+            padding: 20px 30px;
+            text-align: center;
+            color: #8b949e;
+            font-size: 13px;
+            flex-shrink: 0;
+        }
+        #site-footer a {
+            color: var(--active-green);
+            text-decoration: none;
+            transition: 0.3s;
+        }
+        #site-footer a:hover {
+            text-decoration: underline;
+        }
+        .footer-divider {
+            margin: 0 12px;
+            color: var(--border-color);
+        }
+
+        /* --- Markdown 表格样式 --- */
+        .markdown-body table {
+            display: table;
+            width: auto;
+            max-width: 100%;
+            overflow: auto;
+            border-collapse: collapse;
+            border-spacing: 0;
+            margin: 16px 0;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+        }
+        .markdown-body table::-webkit-scrollbar {
+            height: 4px;
+        }
+        .markdown-body table th,
+        .markdown-body table td {
+            padding: 12px 16px;
+            border: 1px solid var(--border-color);
+            text-align: left;
+        }
+        .markdown-body table th {
+            background: var(--sidebar-bg);
+            font-weight: 600;
+            color: var(--active-green);
+        }
+        .markdown-body table tr {
+            background: var(--bg-dark);
+            border-top: 1px solid var(--border-color);
+        }
+        .markdown-body table tr:nth-child(2n) {
+            background: rgba(255, 255, 255, 0.02);
+        }
+        .markdown-body table tr:hover {
+            background: rgba(126, 231, 135, 0.05);
+        }
+
+        /* --- Markdown Mermaid 图表样式 --- */
+        .mermaid-container {
+            width: 100%;
+            background: var(--bg-dark);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            margin: 16px 0;
+            padding: 20px;
+            box-sizing: border-box;
+            text-align: center;
+        }
+        .mermaid-container svg {
+            max-width: 100%;
+            height: auto;
+        }
+
+        /* --- KaTeX 数学公式样式 --- */
+        .katex-display {
+            margin: 16px 0;
+            padding: 16px;
+            background: var(--sidebar-bg);
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            overflow-x: auto;
+        }
+        .katex-display::-webkit-scrollbar {
+            height: 2px !important;
+        }
+    </style>
+</head>
+<body>
+
+<!-- 新增：头部栏 -->
+<header id="site-header">
+    <div class="header-left">
+        <a href="/" class="header-logo">
+            <!-- 简单的终端图标 -->
+            <svg height="24" width="24" viewBox="0 0 16 16"><path d="M0 2.75C0 1.784.784 1 1.75 1h12.5c.966 0 1.75.784 1.75 1.75v10.5A1.75 1.75 0 0 1 14.25 14H1.75A1.75 1.75 0 0 1 0 12.25Zm1.75-.25a.25.25 0 0 0-.25.25v10.5c0 .138.112.25.25.25h12.5a.25.25 0 0 0 .25-.25V2.75a.25.25 0 0 0-.25-.25ZM3.25 4h5.5a.75.75 0 0 1 0 1.5h-5.5a.75.75 0 0 1 0-1.5ZM3.25 7h8.5a.75.75 0 0 1 0 1.5h-8.5a.75.75 0 0 1 0-1.5ZM3.25 10h4.5a.75.75 0 0 1 0 1.5h-4.5a.75.75 0 0 1 0-1.5Z"></path></svg>
+            Linux 命令集仓库
+        </a>
+    </div>
+    <div class="header-right">
+        <a href="https://github.com/Jianfei-DinG/bash-notes" target="_blank">GitHub</a>
+        <a href="javascript:location.reload()">刷新</a>
+        <a href="#" onclick="showAbout()">关于</a>
+    </div>
+</header>
+
+<!-- 下方主容器 -->
+<div id="main-wrapper">
+    <aside id="sidebar">
+        <div class="search-container">
+            <input type="text" id="search-input" placeholder="🔍 搜索标题或代码内容...">
+        </div>
+        <ul id="menu-list"></ul>
+    </aside>
+    
+    <!-- 侧边栏折叠按钮 -->
+    <button class="sidebar-toggle" onclick="toggleSidebar()" title="切换侧边栏">
+        <svg viewBox="0 0 24 24">
+            <path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/>
+        </svg>
+    </button>
+
+    <main id="main-view">
+        <div id="content-area" class="markdown-body">
+            <div class="welcome-msg">
+                <h2>📚 命令手册已就绪</h2>
+                <p>请从左侧列表选择一个章节，或使用搜索功能</p>
+            </div>
+        </div>
+    </main>
+</div>
+
+<!-- 页脚 -->
+<footer id="site-footer">
+    <div>
+        © 2026 <a href="#" onclick="showAbout()">TianYun</a>
+        <span class="footer-divider">|</span>
+        个人知识文档库管理系统
+        <span class="footer-divider">|</span>
+        <a href="#" onclick="showAbout()">关于</a>
+        <span class="footer-divider">|</span>
+        v1.0.0
+    </div>
+</footer>
+
+<script>
+let allData = [];
+
+// 手动配置要加载的 Markdown 文件列表
+// 本地使用：填写相对路径
+// GitHub Pages：填写仓库中的文件路径
+const MD_FILES = [
+    '命令集.md',
+    '新建文本文档.md',
+    // 'Python笔记.md',
+    // '网络配置.md',
+    // 添加更多文件...
+];
+
+async function init() {
+    try {
+        // 并行加载所有配置的 .md 文件
+        const promises = MD_FILES.map(async (filename) => {
+            try {
+                const response = await fetch(filename);
+                if (!response.ok) {
+                    console.warn(`无法加载 ${filename}`);
+                    return [];
+                }
+                const rawText = await response.text();
+                return parseMarkdownContent(filename, rawText);
+            } catch (err) {
+                console.error(`加载 ${filename} 失败:`, err);
+                return [];
+            }
+        });
+        
+        const results = await Promise.all(promises);
+        allData = results.flat();
+        
+        console.log(`成功加载 ${MD_FILES.length} 个文件，共 ${allData.length} 个章节`);
+
+        if (allData.length > 0) {
+            renderMenu(allData);
+            handleHashNavigation();
+        }
+    } catch (err) {
+        document.getElementById('content-area').innerHTML = `<h2>错误: ${err.message}</h2>`;
+    }
+}
+
+// 解析 Markdown 内容
+function parseMarkdownContent(filename, rawText) {
+    const results = [];
+    const parts = rawText.split(/<details/i);
+    
+    parts.forEach(part => {
+        const sStart = part.toLowerCase().indexOf('<summary>');
+        const sEnd = part.toLowerCase().indexOf('</summary>');
+        if (sStart !== -1 && sEnd !== -1) {
+            const title = part.substring(sStart + 9, sEnd).replace(/<[^>]+>/g, '').trim();
+            const dEnd = part.toLowerCase().indexOf('</details>');
+            let content = (dEnd !== -1) ? part.substring(sEnd + 10, dEnd).trim() : part.substring(sEnd + 10).trim();
+            content = content.replace(/={10,}/g, '');
+            results.push({ title, content });
+        }
+    });
+    
+    return results;
+}
+
+function renderMenu(data) {
+    const menuList = document.getElementById('menu-list');
+    menuList.innerHTML = '';
+    data.forEach((item) => {
+        const li = document.createElement('li');
+        li.className = 'menu-item';
+        li.innerText = item.title;
+        li.setAttribute('data-title', item.title);
+        li.onclick = () => {
+            window.location.hash = encodeURIComponent(item.title);
+        };
+        menuList.appendChild(li);
+    });
+}
+
+function handleHashNavigation() {
+    const hash = window.location.hash.substring(1);
+    if (!hash) return;
+    const targetTitle = decodeURIComponent(hash);
+    const targetItem = allData.find(d => d.title === targetTitle);
+    if (targetItem) {
+        showContent(targetItem);
+        document.querySelectorAll('.menu-item').forEach(el => {
+            el.classList.toggle('active', el.getAttribute('data-title') === targetTitle);
+        });
+    }
+}
+
+window.addEventListener('hashchange', handleHashNavigation);
+
+function showContent(item) {
+    const container = document.getElementById('content-area');
+    container.innerHTML = `<h1 class="content-title">${item.title}</h1>` + marked.parse(item.content);
+    Prism.highlightAll();
+    setTimeout(() => {
+        addCopyButtons();
+        renderMermaid();
+        renderMath();
+        addShareButton();
+    }, 50);
+    document.getElementById('main-view').scrollTop = 0;
+}
+
+function addCopyButtons() {
+    document.querySelectorAll('pre').forEach(pre => {
+        if (pre.querySelector('.copy-btn')) return;
+        const btn = document.createElement('button');
+        btn.className = 'copy-btn';
+        btn.innerText = '复制';
+        
+        btn.onclick = () => {
+            const code = pre.querySelector('code').innerText;
+            navigator.clipboard.writeText(code).then(() => {
+                btn.innerText = '已复制!';
+                btn.classList.add('success');
+                setTimeout(() => { btn.innerText = '复制'; btn.classList.remove('success'); }, 2000);
+            });
+        };
+        
+        pre.appendChild(btn);
+    });
+}
+
+document.getElementById('search-input').oninput = function(e) {
+    const term = e.target.value.toLowerCase();
+    const filtered = allData.filter(item => 
+        item.title.toLowerCase().includes(term) || item.content.toLowerCase().includes(term)
+    );
+    renderMenu(filtered);
+};
+
+// 初始化 Mermaid
+mermaid.initialize({ 
+    startOnLoad: false,
+    theme: 'dark',
+    securityLevel: 'loose',
+    fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif'
+});
+
+// 自定义滚动条样式（通过 JavaScript 强制应用）
+function applyCustomScrollbar() {
+    const style = document.createElement('style');
+    style.id = 'custom-scrollbar-style';
+    style.textContent = `
+        #menu-list::-webkit-scrollbar,
+        #main-view::-webkit-scrollbar {
+            width: 3px !important;
+        }
+        #menu-list::-webkit-scrollbar-track,
+        #main-view::-webkit-scrollbar-track {
+            background: transparent !important;
+        }
+        #menu-list::-webkit-scrollbar-thumb,
+        #main-view::-webkit-scrollbar-thumb {
+            background: #484f58 !important;
+            border-radius: 0 !important;
+        }
+        #menu-list::-webkit-scrollbar-thumb:hover,
+        #main-view::-webkit-scrollbar-thumb:hover {
+            background: #7ee787 !important;
+        }
+    `;
+    
+    // 如果已存在则删除
+    const existing = document.getElementById('custom-scrollbar-style');
+    if (existing) existing.remove();
+    
+    // 添加到 head 的最后
+    document.head.appendChild(style);
+}
+
+// 渲染 Mermaid 图表
+async function renderMermaid() {
+    const mermaidBlocks = document.querySelectorAll('.language-mermaid');
+    if (mermaidBlocks.length === 0) return;
+
+    for (const block of mermaidBlocks) {
+        try {
+            const pre = block.parentElement;
+            if (!pre || pre.tagName !== 'PRE') continue;
+            
+            const graphDefinition = block.textContent;
+            const { svg } = await mermaid.render('mermaid-' + Math.random().toString(36).substr(2, 9), graphDefinition);
+            
+            const wrapper = document.createElement('div');
+            wrapper.className = 'mermaid-container';
+            wrapper.innerHTML = svg;
+            
+            pre.replaceWith(wrapper);
+        } catch (err) {
+            console.error('渲染 Mermaid 图表失败:', err);
+            block.textContent = '图表渲染失败: ' + err.message;
+        }
+    }
+}
+
+// 渲染数学公式
+function renderMath() {
+    const contentArea = document.getElementById('content-area');
+    renderMathInElement(contentArea, {
+        delimiters: [
+            {left: '$$', right: '$$', display: true},
+            {left: '$', right: '$', display: false}
+        ],
+        throwOnError: false
+    });
+}
+
+// 添加分享按钮
+function addShareButton() {
+    const hash = window.location.hash.substring(1);
+    if (!hash) return;
+    
+    const titleElement = document.querySelector('.content-title');
+    if (titleElement && !document.querySelector('.share-btn')) {
+        const btn = document.createElement('button');
+        btn.className = 'share-btn';
+        btn.innerHTML = '🔗 分享';
+        btn.style.cssText = `
+            float: right;
+            padding: 8px 16px;
+            background: var(--sidebar-bg);
+            color: var(--text-color);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s;
+        `;
+        btn.onmouseover = () => btn.style.background = '#444c56';
+        btn.onmouseout = () => btn.style.background = 'var(--sidebar-bg)';
+        btn.onclick = () => sharePage();
+        titleElement.appendChild(btn);
+    }
+}
+
+// 分享页面 - 复制 URL
+function sharePage() {
+    const url = window.location.href;
+    const btn = document.querySelector('.share-btn');
+    
+    navigator.clipboard.writeText(url).then(() => {
+        if (btn) {
+            btn.innerHTML = '✅ 已复制';
+            btn.style.background = '#238636';
+            btn.style.color = 'white';
+            btn.style.borderColor = '#238636';
+            
+            setTimeout(() => {
+                btn.innerHTML = '🔗 分享';
+                btn.style.background = 'var(--sidebar-bg)';
+                btn.style.color = 'var(--text-color)';
+                btn.style.borderColor = 'var(--border-color)';
+            }, 2000);
+        }
+    }).catch(err => {
+        // 降级方案：兼容不支持 clipboard API 的浏览器
+        const input = document.createElement('input');
+        input.value = url;
+        document.body.appendChild(input);
+        input.select();
+        document.execCommand('copy');
+        document.body.removeChild(input);
+        
+        if (btn) {
+            btn.innerHTML = '✅ 已复制';
+            setTimeout(() => {
+                btn.innerHTML = '🔗 分享';
+            }, 2000);
+        }
+    });
+}
+
+// 显示关于信息
+function showAbout() {
+    const aboutHTML = `
+        <div style="
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            backdrop-filter: blur(5px);
+        " onclick="this.remove()">
+            <div style="
+                background: var(--sidebar-bg);
+                border: 1px solid var(--border-color);
+                border-radius: 12px;
+                padding: 40px;
+                max-width: 500px;
+                width: 90%;
+                box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+            " onclick="event.stopPropagation()">
+                <h2 style="
+                    color: var(--active-green);
+                    margin: 0 0 20px 0;
+                    text-align: center;
+                    font-size: 24px;
+                ">📘 Linux 命令集仓库</h2>
+                
+                <div style="
+                    color: var(--text-color);
+                    line-height: 1.8;
+                    font-size: 15px;
+                ">
+                    <p style="margin: 12px 0;"><strong>类型：</strong>个人知识文档库管理系统</p>
+                    <p style="margin: 12px 0;"><strong>版本：</strong>v1.0.0</p>
+                    <p style="margin: 12px 0;"><strong>作者：</strong>TianYun</p>
+                    <p style="margin: 12px 0;"><strong>创建日期：</strong>2026年4月</p>
+                    <p style="margin: 12px 0;"><strong>仓库地址：</strong><a href="https://github.com/Jianfei-DinG/bash-notes" target="_blank" style="color: var(--active-green); text-decoration: none;">https://github.com/Jianfei-DinG/bash-notes</a></p>
+                    <p style="margin: 12px 0;"><strong>描述：</strong>个人知识文档库管理系统</p>
+                    
+                    <hr style="
+                        border: none;
+                        border-top: 1px solid var(--border-color);
+                        margin: 20px 0;
+                    ">
+                    
+                    <p style="margin: 12px 0; color: #8b949e; font-size: 13px;">
+                        基于纯前端技术栈构建的本地知识库，支持 Markdown 表格、Mermaid 流程图、数学公式等渲染，实现个人技术文档的高效管理与快速检索。
+                    </p>
+                    
+                    <div style="
+                        margin-top: 24px;
+                        padding: 16px;
+                        background: var(--bg-dark);
+                        border-radius: 8px;
+                        border: 1px solid var(--border-color);
+                    ">
+                        <p style="
+                            margin: 0;
+                            color: #8b949e;
+                            font-size: 12px;
+                            text-align: center;
+                        ">
+                            © 2026 TianYun. All rights reserved.<br>
+                            保留所有权利
+                        </p>
+                    </div>
+                </div>
+                
+                <button onclick="this.parentElement.parentElement.remove()" style="
+                    width: 100%;
+                    margin-top: 24px;
+                    padding: 12px;
+                    background: #238636;
+                    color: white;
+                    border: none;
+                    border-radius: 6px;
+                    cursor: pointer;
+                    font-size: 14px;
+                    font-weight: bold;
+                    transition: background 0.3s;
+                " onmouseover="this.style.background='#2ea043'" onmouseout="this.style.background='#238636'">
+                    知道了
+                </button>
+            </div>
+        </div>
+    `;
+    
+    document.body.insertAdjacentHTML('beforeend', aboutHTML);
+}
+
+// 切换侧边栏
+function toggleSidebar() {
+    const sidebar = document.getElementById('sidebar');
+    const toggle = document.querySelector('.sidebar-toggle');
+    
+    sidebar.classList.toggle('collapsed');
+    toggle.classList.toggle('collapsed');
+    
+    // 保存状态到 localStorage
+    const isCollapsed = sidebar.classList.contains('collapsed');
+    localStorage.setItem('sidebar-collapsed', isCollapsed);
+}
+
+// 初始化侧边栏状态
+function initSidebarState() {
+    const isCollapsed = localStorage.getItem('sidebar-collapsed');
+    // 默认折叠侧边栏（如果没有设置过，默认折叠）
+    if (isCollapsed === null || isCollapsed === 'true') {
+        document.getElementById('sidebar').classList.add('collapsed');
+        document.querySelector('.sidebar-toggle').classList.add('collapsed');
+        localStorage.setItem('sidebar-collapsed', 'true');
+    }
+}
+
+init();
+
+// 页面加载完成后应用自定义滚动条
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => {
+        applyCustomScrollbar();
+        initSidebarState();
+    });
+} else {
+    applyCustomScrollbar();
+    initSidebarState();
+}
+
+// 延迟再次应用，确保覆盖所有样式
+setTimeout(applyCustomScrollbar, 100);
+setTimeout(applyCustomScrollbar, 500);
+</script>
+
+</body>
+</html>
