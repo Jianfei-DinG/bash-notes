@@ -34,6 +34,10 @@ cat /etc/ufw/user.rules
 ufw enable   # 开启
 ufw disable  # 关闭
 
+把“入站流量”的默认规则改成：允许（allow）
+ufw default allow incoming
+ufw status verbose
+
 禁止外网所有 IP 访问 8321
 ufw deny 8321/tcp
 
