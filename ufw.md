@@ -19,6 +19,7 @@ ufw status verbose
 一定先放行
 ```
 ```
+ufw insert 1 deny 9321  #插入最前面
 ufw allow 22
 ufw allow 80
 ufw allow 443
