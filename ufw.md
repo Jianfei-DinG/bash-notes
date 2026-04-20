@@ -16,6 +16,18 @@ apt update && apt install ufw -y
 ```
 ufw --version
 ufw status verbose
+一定先放行
+```
+```
+ufw allow 22
+ufw allow 80
+ufw allow 443
+ufw allow 7000
+```
+查看放行配置
+```
+ufw show added 
+cat /etc/ufw/user.rules
 
 开关防火墙
 ufw enable   # 开启
