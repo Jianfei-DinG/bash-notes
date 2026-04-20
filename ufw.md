@@ -19,6 +19,9 @@ ufw status verbose
 一定先放行
 ```
 ```
+先写 DENY（黑名单）
+再写 ALLOW（白名单）
+
 ufw insert 1 deny 9321  #插入最前面
 ufw allow 22
 ufw allow 80
