@@ -28,7 +28,8 @@ ufw allow 7000
 ```
 ufw show added 
 cat /etc/ufw/user.rules
-
+```
+```
 开关防火墙
 ufw enable   # 开启
 ufw disable  # 关闭
