@@ -16,3 +16,10 @@ schtasks /create /tn "每日定时重启" /tr "shutdown /r /f /t 0" /sc daily /s
 ```
 taskschd.msc  
 ```
+设置时间时区
+```
+tzutil /s "China Standard Time" && w32tm /config /syncfromflags:manual /manualpeerlist:"ntp.aliyun.com" /update && net start w32time && w32tm /resync
+```
+```
+tzutil /s "China Standard Time"
+```
