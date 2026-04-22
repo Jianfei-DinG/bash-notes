@@ -23,3 +23,7 @@ tzutil /s "China Standard Time" && w32tm /config /syncfromflags:manual /manualpe
 ```
 tzutil /s "China Standard Time"
 ```
+关闭自动更新
+```
+reg add "HKLM\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate\AU" /v NoAutoUpdate /t REG_DWORD /d 1 /f && net stop wuauserv
+```
