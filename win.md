@@ -41,5 +41,5 @@ reg add "HKLM\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate\AU" /v NoAutoUpd
 ```
 $bytes = New-Object byte[] 32
 [System.Security.Cryptography.RandomNumberGenerator]::Create().GetBytes($bytes)
-([BitConverter]::ToString($bytes)).Replace("-", "")
+([BitConverter]::ToString($bytes)).Replace("-", "").ToLower()
 ```
