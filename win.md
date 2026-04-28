@@ -43,3 +43,7 @@ $bytes = New-Object byte[] 32
 [System.Security.Cryptography.RandomNumberGenerator]::Create().GetBytes($bytes)
 ([BitConverter]::ToString($bytes)).Replace("-", "").ToLower()
 ```
+>   示例：
+```
+25f85499d31bd327e6e3eb59e32d61f3f2d009a90fc9a61c3f68bb6f8bb83808
+```
