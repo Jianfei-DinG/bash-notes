@@ -47,3 +47,14 @@ $bytes = New-Object byte[] 32
 ```
 25f85499d31bd327e6e3eb59e32d61f3f2d009a90fc9a61c3f68bb6f8bb83808
 ```
+
+>   URL 转换成 固定值 SHA256（推荐）哈希（Hash）
+```
+$url = "https://example.com"
+
+$sha256 = [System.Security.Cryptography.SHA256]::Create()
+$bytes = [System.Text.Encoding]::UTF8.GetBytes($url)
+$hash = $sha256.ComputeHash($bytes)
+
+([BitConverter]::ToString($hash)).Replace("-", "").ToLower()
+```
