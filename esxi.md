@@ -16,6 +16,11 @@ vim-cmd vmsvc/power.off <vmid> 			#强制关机
 vim-cmd vmsvc/power.reboot <vmid> 		#重启
 vim-cmd vmsvc/power.getstate <vmid>  	#查看虚拟机状态 
 ```
+远程定时关机
+```
+0 2 * * * ssh root@192.168.1.4 "vim-cmd vmsvc/power.off 11"
+```
+
 虚拟机管理（核心）
 ```
 # 查看所有虚拟机
