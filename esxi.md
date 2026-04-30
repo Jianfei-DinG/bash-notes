@@ -45,6 +45,8 @@ vim-cmd vmsvc/power.reboot <VMID>
 # 查看虚拟机详细信息
 vim-cmd vmsvc/get.summary <VMID>
 
+esxcli system hostname set --host=TianYun
+
 esxcli vm process list
 esxcli network nic list
 esxtop
