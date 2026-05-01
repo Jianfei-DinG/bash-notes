@@ -58,3 +58,17 @@ $hash = $sha256.ComputeHash($bytes)
 
 ([BitConverter]::ToString($hash)).Replace("-", "").ToLower()
 ```
+
+<!-- ====================================================================== -->
+</details>
+<hr style="border: none; height: 1px; background-color: green;">
+<details>  
+<summary>网站设计风格</summary> 
+> 适用于 风格
+<a name="2"></a>
+<hr style="all: unset; display: block; margin: 12px auto; height: 6px; border-top: 1px solid #7ee7878f; width: 100%;">
+<!-- ====================================================================== -->
+开发组合
+FastAPI (后端) + Jinja2 (模板) + Tailwind (样式) + Vue (局部交互)
+  
+科技 SaaS 风格
