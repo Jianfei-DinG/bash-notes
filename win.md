@@ -82,8 +82,8 @@ FastAPI (后端) + Jinja2 (模板) + Tailwind (样式) + Vue (局部交互)
 <a name="2"></a>
 <hr style="all: unset; display: block; margin: 12px auto; height: 6px; border-top: 1px solid #7ee7878f; width: 100%;">
 <!-- ====================================================================== -->
-> 生成私钥
   
+> 生成私钥
 ```
 ssh-keygen -t rsa -b 2048 -m PEM -f alipay_private_key -N ""
 ```
