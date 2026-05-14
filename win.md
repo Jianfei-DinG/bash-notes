@@ -85,11 +85,11 @@ FastAPI (后端) + Jinja2 (模板) + Tailwind (样式) + Vue (局部交互)
 > 生成私钥
   
 ```
-ssh-keygen -t rsa -b 2048 -m PEM -f alipay_key -N ""
+ssh-keygen -t rsa -b 2048 -m PEM -f alipay_private_key -N ""
 ```
 > 导出支付宝专用公钥
 ```
-ssh-keygen -f alipay_key -e -m PKCS8 > alipay_public_key.pem
+ssh-keygen -f alipay_private_key -e -m PKCS8 > alipay_public_key.pem
 ```
 <!-- ====================================================================== -->
 </details>
