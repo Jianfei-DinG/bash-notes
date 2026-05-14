@@ -72,3 +72,24 @@ $hash = $sha256.ComputeHash($bytes)
 FastAPI (后端) + Jinja2 (模板) + Tailwind (样式) + Vue (局部交互)
   
 科技 SaaS 风格
+
+<!-- ====================================================================== -->
+</details>
+<hr style="border: none; height: 1px; background-color: green;">
+<details>  
+<summary>支付宝私钥公钥生成</summary> 
+> 适用于 windows
+<a name="2"></a>
+<hr style="all: unset; display: block; margin: 12px auto; height: 6px; border-top: 1px solid #7ee7878f; width: 100%;">
+<!-- ====================================================================== -->
+> 生成私钥
+  
+```
+ssh-keygen -t rsa -b 2048 -m PEM -f alipay_key -N ""
+```
+> 导出支付宝专用公钥
+```
+ssh-keygen -f alipay_key -e -m PKCS8 > alipay_public_key.pem
+```
+<!-- ====================================================================== -->
+</details>
