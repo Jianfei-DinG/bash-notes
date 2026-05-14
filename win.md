@@ -91,5 +91,11 @@ ssh-keygen -t rsa -b 2048 -m PEM -f alipay_private_key -N ""
 ```
 ssh-keygen -f alipay_private_key -e -m PKCS8 > alipay_public_key.pem
 ```
+> 结果：
+```
+alipay_private_key         # 私钥
+alipay_private_key.pub     # 默认 OpenSSH 公钥格式
+alipay_public_key.pem      # PKCS8 格式公钥（上传支付宝）
+```
 <!-- ====================================================================== -->
 </details>
