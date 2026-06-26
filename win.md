@@ -99,3 +99,24 @@ alipay_public_key.pem      # PKCS8 格式公钥（上传支付宝）
 ```
 <!-- ====================================================================== -->
 </details>
+<hr style="border: none; height: 1px; background-color: green;">
+<details>  
+<summary>windows 驱动备份或恢复 </summary> 
+> 适用于 windows 10 11
+<a name="2"></a>
+<hr style="all: unset; display: block; margin: 12px auto; height: 6px; border-top: 1px solid #7ee7878f; width: 100%;">
+<!-- ====================================================================== -->
+  
+> 以管理员身份打开 CMD：
+```
+dism /online /export-driver /destination:D:\DriverBackup
+```
+```
+pnputil /export-driver * D:\DriverBackup
+```
+> 恢复驱动
+```
+pnputil /add-driver D:\DriverBackup\*.inf /subdirs /install
+```
+<!-- ====================================================================== -->
+</details>
