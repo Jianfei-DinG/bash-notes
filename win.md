@@ -118,5 +118,21 @@ pnputil /export-driver * D:\DriverBackup
 ```
 pnputil /add-driver D:\DriverBackup\*.inf /subdirs /install
 ```
+
+> 游览器数据备份
+```
+C:\Users\你的用户名\AppData\Local\Google\Chrome\User Data
+C:\Users\你的用户名\AppData\Local\Microsoft\Edge\User Data
+```
+> 备份
+```
+mkdir D:\Backup\Edge
+taskkill /F /IM msedge.exe
+robocopy "%LOCALAPPDATA%\Microsoft\Edge\User Data" D:\Backup\Edge /E /COPYALL /R:1 /W:1
+```
+> 恢复
+```
+robocopy D:\Backup\Edge "%LOCALAPPDATA%\Microsoft\Edge\User Data" /E /COPYALL
+```
 <!-- ====================================================================== -->
 </details>
