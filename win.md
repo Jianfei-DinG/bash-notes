@@ -107,7 +107,7 @@ alipay_public_key.pem      # PKCS8 格式公钥（上传支付宝）
 <hr style="all: unset; display: block; margin: 12px auto; height: 6px; border-top: 1px solid #7ee7878f; width: 100%;">
 <!-- ====================================================================== -->
   
-> 以管理员身份打开 CMD：
+> 备份驱动 以管理员身份打开 CMD：
 ```
 dism /online /export-driver /destination:D:\DriverBackup
 ```
