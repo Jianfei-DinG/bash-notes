@@ -21,7 +21,15 @@ vim-cmd vmsvc/power.getstate <vmid>  	#查看虚拟机状态
 ```
 0 2 * * * /usr/bin/ssh -T -o StrictHostKeyChecking=no root@192.168.1.4 "/bin/vim-cmd vmsvc/power.shutdown 11 || /bin/vim-cmd vmsvc/power.off 11" >> /tmp/vm_shutdown.log 2>&1
 ```
-
+```
+sudo apt update && sudo apt install sshpass
+```
+```
+0 2 * * * /usr/bin/sshpass -p '' ssh -o StrictHostKeyChecking=no root@192.168.1.4 "vim-cmd vmsvc/power.shutdown 11 || vim-cmd vmsvc/power.off 11" >> /tmp/vm_shutdown.log 2>&1
+```
+```
+sshpass -p '' ssh -o StrictHostKeyChecking=no root@192.168.1.4 "vim-cmd vmsvc/power.getstate 11"
+```
 虚拟机管理（核心）
 ```
 # 查看所有虚拟机
