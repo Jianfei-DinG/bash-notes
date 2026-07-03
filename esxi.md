@@ -25,11 +25,11 @@ sudo apt update && sudo apt install sshpass
 ```
 > 关机
 ```
-0 0 * * * { echo "[$(date '+%F %T')] Powering off VM 11"; /usr/bin/sshpass -p '' ssh -o StrictHostKeyChecking=no root@192.168.1.4 "/bin/vim-cmd vmsvc/power.shutdown 11 || /bin/vim-cmd vmsvc/power.off 11"; } >> /tmp/vm_power.log 2>&1
+0 0 * * * { echo "[$(/bin/date)] Powering off VM 11"; /usr/bin/sshpass -p '' ssh -o StrictHostKeyChecking=no root@192.168.1.4 "/bin/vim-cmd vmsvc/power.shutdown 11 || /bin/vim-cmd vmsvc/power.off 11"; } >> /tmp/vm_power.log 2>&1
 ```
 > 开机
 ```
-0 8 * * * { echo "[$(date '+%F %T')] Powering on VM 11"; /usr/bin/sshpass -p '' ssh -o StrictHostKeyChecking=no root@192.168.1.4 "vim-cmd vmsvc/power.on 11"; } >> /tmp/vm_power.log 2>&1
+0 8 * * * { echo "[$(/bin/date)] Powering on VM 11"; /usr/bin/sshpass -p '' ssh -o StrictHostKeyChecking=no root@192.168.1.4 "vim-cmd vmsvc/power.on 11"; } >> /tmp/vm_power.log 2>&1
 ```
 ```
 /usr/bin/sshpass -p '' ssh -o StrictHostKeyChecking=no root@192.168.1.4 "vim-cmd vmsvc/power.getstate 11"
